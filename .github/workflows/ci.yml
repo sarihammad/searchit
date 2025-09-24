@@ -1,0 +1,147 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.11]
+        node-version: [20]
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: searchit_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install Python dependencies
+      run: |
+        cd services/gateway
+        pip install -r requirements.txt
+        cd ../indexer
+        pip install -r requirements.txt
+
+    - name: Install Node.js dependencies
+      run: |
+        cd web
+        npm ci
+
+    - name: Lint Python code
+      run: |
+        cd services/gateway
+        ruff check .
+        black --check .
+        cd ../indexer
+        ruff check .
+        black --check .
+
+    - name: Lint Node.js code
+      run: |
+        cd web
+        npm run lint
+
+    - name: Test Python code
+      run: |
+        cd services/gateway
+        pytest tests/ -v
+        cd ../indexer
+        pytest tests/ -v
+
+    - name: Test Node.js code
+      run: |
+        cd web
+        npm test
+
+    - name: Build Docker images
+      run: |
+        docker-compose -f deploy/compose/docker-compose.yml build
+
+    - name: Start services for evaluation
+      run: |
+        docker-compose -f deploy/compose/docker-compose.yml up -d
+        sleep 60  # Wait for services to be ready
+
+    - name: Run evaluation
+      run: |
+        cd eval/scripts
+        python run_eval.py --config ../configs/eval.yaml --gateway http://localhost:8000
+
+    - name: Check for regressions
+      run: |
+        python -c "
+        import json
+        import sys
+        
+        with open('eval/runs/latest.json', 'r') as f:
+            results = json.load(f)
+        
+        with open('eval/baselines/baseline_metrics.json', 'r') as f:
+            baseline = json.load(f)
+        
+        regression_detected = False
+        epsilon = 0.01
+        
+        # Check search metrics
+        for config_name, metrics in results.get('search_results', {}).items():
+            if config_name in baseline.get('search_results', {}):
+                baseline_metrics = baseline['search_results'][config_name]
+                for metric in ['avg_recall_at_10', 'avg_mrr', 'avg_ndcg_at_10']:
+                    baseline_val = baseline_metrics.get(metric, 0.0)
+                    current_val = metrics.get(metric, 0.0)
+                    if current_val < baseline_val - epsilon:
+                        print(f'REGRESSION: {config_name}.{metric}: {current_val:.3f} < {baseline_val:.3f}')
+                        regression_detected = True
+        
+        if regression_detected:
+            sys.exit(1)
+        else:
+            print('No regressions detected')
+        "
+
+    - name: Cleanup
+      if: always()
+      run: |
+        docker-compose -f deploy/compose/docker-compose.yml down
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Run security audit
+      run: |
+        cd services/gateway
+        pip install safety
+        safety check
+        cd ../indexer
+        safety check
+        
+        cd ../../web
+        npm audit --audit-level=high

@@ -22,9 +22,6 @@ make dev-up
 make index-toy
 make demo
 ```
-
-**That's it!**
-
 - **Web UI**: http://localhost:3000
 - **API Docs**: http://localhost:8000/docs
 - **Metrics**: http://localhost:9090 (Prometheus)
@@ -48,11 +45,11 @@ graph TD
     end
 
     subgraph "Gateway"
-        API[FastAPI Gateway (RAG)<br/>retrieve → rerank → assemble → answer]
+        API[FastAPI Gateway RAG<br/>retrieve -> rerank -> assemble -> answer]
     end
 
     subgraph "Frontend"
-        UI[Next.js UI<br/>facets • citations • feedback]
+        UI[Next.js UI]
     end
 
     subgraph "Analytics & Observability"

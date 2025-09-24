@@ -1,0 +1,202 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "SearchIt Dashboard",
+    "tags": ["searchit", "search", "rag"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Request Rate",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(rate(rag_request_total[5m]))",
+            "legendFormat": "Requests/sec"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": null },
+                { "color": "yellow", "value": 10 },
+                { "color": "red", "value": 50 }
+              ]
+            }
+          }
+        },
+        "gridPos": { "h": 8, "w": 6, "x": 0, "y": 0 }
+      },
+      {
+        "id": 2,
+        "title": "Response Time",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(rag_latency_seconds_bucket[5m]))",
+            "legendFormat": "P95 Latency"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": null },
+                { "color": "yellow", "value": 0.5 },
+                { "color": "red", "value": 2.0 }
+              ]
+            }
+          }
+        },
+        "gridPos": { "h": 8, "w": 6, "x": 6, "y": 0 }
+      },
+      {
+        "id": 3,
+        "title": "Abstain Rate",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(rate(rag_abstain_total[5m])) / sum(rate(rag_request_total[5m]))",
+            "legendFormat": "Abstain Rate"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percentunit",
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": null },
+                { "color": "yellow", "value": 0.2 },
+                { "color": "red", "value": 0.5 }
+              ]
+            }
+          }
+        },
+        "gridPos": { "h": 8, "w": 6, "x": 12, "y": 0 }
+      },
+      {
+        "id": 4,
+        "title": "Error Rate",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(rate(rag_request_total{status=\"error\"}[5m])) / sum(rate(rag_request_total[5m]))",
+            "legendFormat": "Error Rate"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percentunit",
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": null },
+                { "color": "yellow", "value": 0.01 },
+                { "color": "red", "value": 0.05 }
+              ]
+            }
+          }
+        },
+        "gridPos": { "h": 8, "w": 6, "x": 18, "y": 0 }
+      },
+      {
+        "id": 5,
+        "title": "Request Rate Over Time",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "sum(rate(rag_request_total[1m])) by (route)",
+            "legendFormat": "{{route}}"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "Requests/sec",
+            "min": 0
+          }
+        ],
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 }
+      },
+      {
+        "id": 6,
+        "title": "Latency Over Time",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(rag_latency_seconds_bucket[5m]))",
+            "legendFormat": "P50"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(rag_latency_seconds_bucket[5m]))",
+            "legendFormat": "P95"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(rag_latency_seconds_bucket[5m]))",
+            "legendFormat": "P99"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "Seconds",
+            "min": 0
+          }
+        ],
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 }
+      },
+      {
+        "id": 7,
+        "title": "Search Sources",
+        "type": "piechart",
+        "targets": [
+          {
+            "expr": "sum(search_retrieved_sources_total) by (source)",
+            "legendFormat": "{{source}}"
+          }
+        ],
+        "gridPos": { "h": 8, "w": 8, "x": 0, "y": 16 }
+      },
+      {
+        "id": 8,
+        "title": "Abstain Reasons",
+        "type": "piechart",
+        "targets": [
+          {
+            "expr": "sum(rag_abstain_total) by (reason)",
+            "legendFormat": "{{reason}}"
+          }
+        ],
+        "gridPos": { "h": 8, "w": 8, "x": 8, "y": 16 }
+      },
+      {
+        "id": 9,
+        "title": "Feedback Distribution",
+        "type": "piechart",
+        "targets": [
+          {
+            "expr": "sum(feedback_total) by (label)",
+            "legendFormat": "{{label}}"
+          }
+        ],
+        "gridPos": { "h": 8, "w": 8, "x": 16, "y": 16 }
+      }
+    ],
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "refresh": "30s"
+  }
+}

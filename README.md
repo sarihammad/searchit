@@ -2,31 +2,6 @@
 
 A hybrid semantic search and grounded QA system featuring OpenSearch BM25 + Vector DB, cross-encoder reranking, grounded generation with citation spans, feedback loops, and comprehensive evaluation harness.
 
-> Try it now: [Live Demo](https://searchit-demo.vercel.app) | Documentation: [Full Guide](docs/) | Quick Start: 3 commands below
-
-## Features
-
-- **Hybrid Search**: BM25 + Dense vectors with RRF fusion for superior recall
-- **Smart Reranking**: Cross-encoder reranking for improved precision
-- **Grounded QA**: Citation-aware answer generation with abstention logic
-- **Feedback Loops**: Click tracking and relevance feedback collection
-- **Evaluation**: Automated metrics and regression testing framework
-- **Observability**: Prometheus metrics, Grafana dashboards, OpenTelemetry tracing
-- **Modern UI**: Next.js 14 with Tailwind CSS and dark mode
-- **Production Ready**: Docker Compose with health checks and monitoring
-
-## Quick Start (3 Commands)
-
-```bash
-make dev-up
-make index-toy
-make demo
-```
-- **Web UI**: http://localhost:3000
-- **API Docs**: http://localhost:8000/docs
-- **Metrics**: http://localhost:9090 (Prometheus)
-- **Dashboards**: http://localhost:3001 (Grafana)
-
 ## Architecture
 
 ```mermaid
@@ -106,6 +81,30 @@ sequenceDiagram
 - **Frontend (Next.js):** Modern search UI with facets, citations, and feedback.
 - **Storage:** Postgres for metadata/qrels/feedback; MinIO for raw docs.
 - **Analytics & Observability:** Kafka for events, Prometheus for metrics, Grafana for dashboards.
+
+## Features
+
+- **Hybrid Search**: BM25 + Dense vectors with RRF fusion for superior recall
+- **Smart Reranking**: Cross-encoder reranking for improved precision
+- **Grounded QA**: Citation-aware answer generation with abstention logic
+- **Feedback Loops**: Click tracking and relevance feedback collection
+- **Evaluation**: Automated metrics and regression testing framework
+- **Observability**: Prometheus metrics, Grafana dashboards, OpenTelemetry tracing
+- **Modern UI**: Next.js 14 with Tailwind CSS and dark mode
+- **Production Ready**: Docker Compose with health checks and monitoring
+
+## Quick Start (3 Commands)
+
+```bash
+make dev-up
+make index-toy
+make demo
+```
+- **Web UI**: http://localhost:3000
+- **API Docs**: http://localhost:8000/docs
+- **Metrics**: http://localhost:9090 (Prometheus)
+- **Dashboards**: http://localhost:3001 (Grafana)
+
 
 ## Tech Stack
 
@@ -251,8 +250,6 @@ RERANKER_MODEL=cross-encoder/ms-marco-MiniLM-L-6-v2
 POSTGRES_HOST=postgres
 MINIO_ENDPOINT=http://minio:9000
 ```
-
-## Contributing
 
 ## Performance
 

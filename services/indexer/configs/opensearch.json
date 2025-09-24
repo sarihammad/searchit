@@ -1,0 +1,74 @@
+{
+  "settings": {
+    "index": {
+      "knn": true,
+      "knn.algo_param.ef_search": 100,
+      "analysis": {
+        "analyzer": {
+          "default": {
+            "type": "standard"
+          },
+          "text_analyzer": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": ["lowercase", "stop", "snowball"]
+          }
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "doc_id": {
+        "type": "keyword"
+      },
+      "chunk_id": {
+        "type": "keyword"
+      },
+      "title": {
+        "type": "text",
+        "analyzer": "text_analyzer",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "text": {
+        "type": "text",
+        "analyzer": "text_analyzer"
+      },
+      "url": {
+        "type": "keyword"
+      },
+      "section": {
+        "type": "keyword"
+      },
+      "lang": {
+        "type": "keyword"
+      },
+      "tags": {
+        "type": "keyword"
+      },
+      "tokens": {
+        "type": "integer"
+      },
+      "created_at": {
+        "type": "date"
+      },
+      "embedding": {
+        "type": "knn_vector",
+        "dimension": 768,
+        "method": {
+          "name": "hnsw",
+          "space_type": "cosinesimil",
+          "engine": "nmslib",
+          "parameters": {
+            "ef_construction": 128,
+            "m": 24
+          }
+        }
+      }
+    }
+  }
+}

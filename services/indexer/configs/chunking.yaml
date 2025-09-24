@@ -1,0 +1,38 @@
+# Chunking configuration for SearchIt
+min_tokens: 250
+max_tokens: 500
+overlap: 0.15
+merge_short_below: 120
+keep_headings: true
+
+# Heading detection patterns
+heading_patterns:
+  - "^#{1,6}\\s+(.+)$" # Markdown headings
+  - "^\\d+\\.\\s+(.+)$" # Numbered sections
+  - "^[A-Z][A-Z\\s]+$" # ALL CAPS headings
+
+# Section splitting
+section_splitters:
+  - "\\n\\n\\n+" # Triple newlines
+  - "\\n---\\n" # Horizontal rules
+  - "\\n===\\n" # Alternative horizontal rules
+
+# Text cleaning
+cleanup:
+  remove_extra_whitespace: true
+  normalize_unicode: true
+  remove_control_chars: true
+
+# Language detection
+language_detection:
+  enabled: true
+  fallback_lang: "en"
+  min_confidence: 0.7
+
+# Tokenization
+tokenizer:
+  type: "simple" # simple|spacy|transformers
+  model: null # For transformers tokenizer
+
+# Overlap strategy
+overlap_strategy: "sentence_boundary" # sentence_boundary|word_boundary|fixed

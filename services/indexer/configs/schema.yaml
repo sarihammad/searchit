@@ -1,0 +1,120 @@
+# Document schema configuration for SearchIt
+
+# Document metadata fields
+document_fields:
+  doc_id:
+    type: "string"
+    required: true
+    description: "Unique document identifier"
+
+  title:
+    type: "string"
+    required: true
+    description: "Document title"
+
+  url:
+    type: "string"
+    required: false
+    description: "Source URL for web documents"
+
+  source:
+    type: "string"
+    required: true
+    description: "Source type (web, pdf, file, etc.)"
+
+  lang:
+    type: "string"
+    required: false
+    default: "en"
+    description: "Document language code"
+
+  tags:
+    type: "array"
+    items:
+      type: "string"
+    required: false
+    default: []
+    description: "Document tags for categorization"
+
+  created_at:
+    type: "datetime"
+    required: true
+    description: "Document creation timestamp"
+
+  updated_at:
+    type: "datetime"
+    required: true
+    description: "Document last update timestamp"
+
+# Chunk metadata fields
+chunk_fields:
+  chunk_id:
+    type: "string"
+    required: true
+    description: "Unique chunk identifier"
+
+  doc_id:
+    type: "string"
+    required: true
+    description: "Parent document ID"
+
+  text:
+    type: "string"
+    required: true
+    description: "Chunk text content"
+
+  section:
+    type: "string"
+    required: false
+    description: "Section title or heading"
+
+  tokens:
+    type: "integer"
+    required: true
+    description: "Token count for the chunk"
+
+  embedding:
+    type: "array"
+    items:
+      type: "float"
+    required: true
+    description: "Vector embedding (768 dimensions)"
+
+  created_at:
+    type: "datetime"
+    required: true
+    description: "Chunk creation timestamp"
+
+# Validation rules
+validation:
+  min_text_length: 10
+  max_text_length: 10000
+  min_tokens: 1
+  max_tokens: 2000
+  embedding_dimension: 768
+
+  required_document_fields:
+    - "doc_id"
+    - "title"
+    - "source"
+
+  required_chunk_fields:
+    - "chunk_id"
+    - "doc_id"
+    - "text"
+    - "tokens"
+    - "embedding"
+
+# Indexing configuration
+indexing:
+  batch_size: 100
+  max_retries: 3
+  retry_delay: 1.0
+
+  opensearch:
+    index_name: "searchit_chunks"
+    refresh_interval: "1s"
+
+  qdrant:
+    collection_name: "searchit_chunks"
+    vector_size: 768

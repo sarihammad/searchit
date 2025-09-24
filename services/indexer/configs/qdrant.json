@@ -1,0 +1,31 @@
+{
+  "collection_name": "searchit_chunks",
+  "vector_size": 768,
+  "distance": "Cosine",
+  "hnsw_config": {
+    "m": 16,
+    "ef_construct": 100,
+    "full_scan_threshold": 10000
+  },
+  "optimizer_config": {
+    "default_segment_number": 2,
+    "max_segment_size": 20000,
+    "memmap_threshold": 50000,
+    "indexing_threshold": 20000,
+    "payload_indexing_threshold": 20000
+  },
+  "replication_factor": 1,
+  "write_consistency_factor": 1,
+  "on_disk_payload": false,
+  "payload_schema": {
+    "doc_id": "keyword",
+    "chunk_id": "keyword",
+    "title": "text",
+    "url": "keyword",
+    "section": "keyword",
+    "lang": "keyword",
+    "tags": "keyword[]",
+    "tokens": "integer",
+    "created_at": "datetime"
+  }
+}

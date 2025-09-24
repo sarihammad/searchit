@@ -1,0 +1,20 @@
+{
+  "timestamp": "2024-01-01 00:00:00",
+  "description": "Baseline metrics for SearchIt evaluation",
+  "search_results": {
+    "Hybrid_RRF": {
+      "avg_recall_at_10": 0.75,
+      "avg_mrr": 0.62,
+      "avg_ndcg_at_10": 0.68,
+      "total_queries": 20
+    }
+  },
+  "ask_results": {
+    "Default": {
+      "avg_abstain_rate": 0.15,
+      "avg_coverage_scores": 0.78,
+      "avg_response_times": 1.2,
+      "total_queries": 20
+    }
+  }
+}
